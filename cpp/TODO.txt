@@ -1,0 +1,5 @@
+This file will serve as a TODO list for test cases to implement
+
+Decompiler to parse ROMs and convert them to CPU instructions
+Empty binary must work
+Basic CPU instructions are handled
