@@ -5,7 +5,7 @@
 namespace {
 
 TEST(DecompilerTest, empty_binary) {
-    auto instructions = Decompiler::decompile({});
+    std::vector<Decompiler::Instruction> instructions = Decompiler::decompile({});
     EXPECT_TRUE(instructions.empty());
 }
 

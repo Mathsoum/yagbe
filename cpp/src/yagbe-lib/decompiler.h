@@ -2,6 +2,10 @@
 
 namespace Decompiler {
 
-std::vector<std::byte> decompile(const std::vector<std::byte>& rom_bytes);
+enum class Instruction {
+
+};
+
+std::vector<Instruction> decompile(const std::vector<std::byte>& rom_bytes);
 
 }
