@@ -66,3 +66,14 @@ std::vector<Decompiler::Instruction> Decompiler::decompile(const std::vector<std
     return {};
 }
 ```
+
+## Fun fact
+
+Après avoir poussé le code à ce stade, j'ai vu sur Github la proportion des langages dans les fichiers sources.  
+![languages_ratio](/yagbe/assets/images/languages_ratio.png)
+
+J'ai trouvé la proportion de code CMake très importante par rapport à la proportion de code cpp.  
+Cependant, avec l'avancement du projet, le code CMake ne devrait pas grossir énormément par rapport au code CPP qui lui va augmenter considérablement.
+
+Un ratio intéressant sera de comparer les tailles de code entre les tests et l'implémentation de l'émulateur lui-même.  
+l'approche TDD devrait normalement m'amener à un ratio plus grand pour le code des tests que le code de l'émulateur.
