@@ -12,3 +12,8 @@ Ce projet est né de trois objectifs principaux :
 
 L'implémentation dans plusieurs langages permet d'explorer les forces et faiblesses de chacun pour ce type de projet, tout en affinant ma maîtrise de l'architecture de la GameBoy.
 
+## Références
+
+- *Jeu d'instructions Z80* https://tdrmk.github.io/gameboy_opcodes/index.html
+- *Zilog Z80 (Wikipedia)* https://fr.wikipedia.org/wiki/Zilog_Z80
+
