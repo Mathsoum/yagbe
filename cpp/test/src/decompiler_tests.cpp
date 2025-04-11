@@ -16,7 +16,7 @@ TEST(DecompilerTest, noop) {
 }
 
 TEST(DecompilerTest, increment_B) {
-    auto instructions = Decompiler::decompile({std::byte{0x03}});
+    auto instructions = Decompiler::decompile({std::byte{0x04}});
     EXPECT_EQ(instructions.size(), 1);
     EXPECT_EQ(instructions.at(0), Decompiler::Instruction::INC_B);
 }
@@ -25,6 +25,20 @@ TEST(DecompilerTest, increment_D) {
     auto instructions = Decompiler::decompile({std::byte{0x14}});
     EXPECT_EQ(instructions.size(), 1);
     EXPECT_EQ(instructions.at(0), Decompiler::Instruction::INC_D);
+}
+
+TEST(DecompilerTest, increment_H) {
+    auto instructions = Decompiler::decompile({std::byte{0x24}});
+    EXPECT_EQ(instructions.size(), 1);
+    EXPECT_EQ(instructions.at(0), Decompiler::Instruction::INC_H);
+}
+
+TEST(DecompilerTest, several_instructions) {
+    auto instructions = Decompiler::decompile({std::byte{0x24}, std::byte{0x14}, std::byte{0x04}});
+    EXPECT_EQ(instructions.size(), 3);
+    EXPECT_EQ(instructions.at(0), Decompiler::Instruction::INC_H);
+    EXPECT_EQ(instructions.at(1), Decompiler::Instruction::INC_D);
+    EXPECT_EQ(instructions.at(2), Decompiler::Instruction::INC_B);
 }
 
 }
