@@ -5,7 +5,10 @@ const std::map<std::byte, Decompiler::Instruction> instruction_map = {
     {std::byte(0x00), Decompiler::Instruction::NOOP},
     {std::byte(0x04), Decompiler::Instruction::INC_B},
     {std::byte(0x14), Decompiler::Instruction::INC_D},
-    {std::byte(0x24), Decompiler::Instruction::INC_H}
+    {std::byte(0x24), Decompiler::Instruction::INC_H},
+    {std::byte(0x0C), Decompiler::Instruction::INC_C},
+    {std::byte(0x1C), Decompiler::Instruction::INC_E},
+    {std::byte(0x2C), Decompiler::Instruction::INC_L}
 };
 
 std::vector<Decompiler::Instruction> Decompiler::decompile(const std::vector<std::byte>& rom_bytes)
