@@ -3,7 +3,8 @@
 
 const std::map<std::byte, Decompiler::Instruction> instruction_map = {
     {std::byte(0x00), Decompiler::Instruction::NOOP},
-    {std::byte(0x03), Decompiler::Instruction::INC_B}
+    {std::byte(0x03), Decompiler::Instruction::INC_B},
+    {std::byte(0x14), Decompiler::Instruction::INC_D}
 };
 
 std::vector<Decompiler::Instruction> Decompiler::decompile(const std::vector<std::byte>& rom_bytes)

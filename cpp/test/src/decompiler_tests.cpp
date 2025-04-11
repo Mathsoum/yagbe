@@ -21,4 +21,10 @@ TEST(DecompilerTest, increment_B) {
     EXPECT_EQ(instructions.at(0), Decompiler::Instruction::INC_B);
 }
 
+TEST(DecompilerTest, increment_D) {
+    auto instructions = Decompiler::decompile({std::byte{0x14}});
+    EXPECT_EQ(instructions.size(), 1);
+    EXPECT_EQ(instructions.at(0), Decompiler::Instruction::INC_D);
+}
+
 }
