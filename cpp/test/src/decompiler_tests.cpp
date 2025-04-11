@@ -15,4 +15,10 @@ TEST(DecompilerTest, noop) {
     EXPECT_EQ(instructions.at(0), Decompiler::Instruction::NOOP);
 }
 
+TEST(DecompilerTest, increment_B) {
+    auto instructions = Decompiler::decompile({std::byte{0x03}});
+    EXPECT_EQ(instructions.size(), 1);
+    EXPECT_EQ(instructions.at(0), Decompiler::Instruction::INC_B);
+}
+
 }
