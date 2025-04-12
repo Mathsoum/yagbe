@@ -4,7 +4,7 @@ Decompiler to parse ROMs and convert them to CPU instructions
 > Empty binary must work
 Basic CPU instructions are handled
 > Handle NOOP
-Handle single byte INC instructions
-Handle single byte DEC instructions
+> Handle single byte INC instructions
+> Handle single byte DEC instructions
 Handle two byte INC instructions
 Handle two byte DEC instructions
