@@ -2,6 +2,7 @@
 #include "gtest/gtest.h"
 #include <fstream>
 #include "decompiler.h"
+#include "emulator.h"
 
 namespace {
 
@@ -90,6 +91,42 @@ TEST(DecompilerTest, LD_16bytes_instructions) {
     EXPECT_EQ(instructions.at(2).operands.size(), 2);
     EXPECT_EQ(instructions.at(3).code, Decompiler::InstructionCode::LD16_SP);
     EXPECT_EQ(instructions.at(3).operands.size(), 2);
+}
+
+TEST(DecompilerTest, LD_8bytes_instructions) {
+    auto instructions = Decompiler::decompile({
+        std::byte{0x06}, std::byte{0x01},
+        std::byte{0x16}, std::byte{0x12},
+        std::byte{0x26}, std::byte{0x23},
+    });
+
+    EXPECT_EQ(instructions.size(), 3);
+    EXPECT_EQ(instructions.at(0).code, Decompiler::InstructionCode::LD8_B);
+    EXPECT_EQ(instructions.at(0).operands.size(), 1);
+    EXPECT_EQ(instructions.at(1).code, Decompiler::InstructionCode::LD8_D);
+    EXPECT_EQ(instructions.at(1).operands.size(), 1);
+    EXPECT_EQ(instructions.at(2).code, Decompiler::InstructionCode::LD8_H);
+    EXPECT_EQ(instructions.at(2).operands.size(), 1);
+}
+
+TEST(DecompilerTest, Tetris_first_row) {
+    //0cc3 0002 0000 0000 0cc3 ff02 ffff ffff
+    auto instructions = Decompiler::decompile({
+        std::byte{0x0c}, std::byte{0xc3},
+        std::byte{0x00}, std::byte{0x02},
+        std::byte{0x00}, std::byte{0x00},
+        std::byte{0x00}, std::byte{0x00},
+        std::byte{0x0C}, std::byte{0xc3},
+        std::byte{0xff}, std::byte{0x02},
+        std::byte{0xff}, std::byte{0xff},
+        std::byte{0xff}, std::byte{0xff},
+    });
+
+    EXPECT_EQ(instructions.size(), 12);
+    EXPECT_EQ(instructions.at(0).code, Decompiler::InstructionCode::INC_C);
+    EXPECT_TRUE(instructions.at(0).operands.empty());
+    EXPECT_EQ(instructions.at(1).code, Decompiler::InstructionCode::JP_A16);
+    EXPECT_EQ(instructions.at(1).operands.size(), 2);
 }
 
 }

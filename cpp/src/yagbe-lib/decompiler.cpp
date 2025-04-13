@@ -1,7 +1,7 @@
 #include "decompiler.h"
 #include <map>
 
-const std::map<std::byte, Decompiler::InstructionCode> single_byte_instruction_map = {
+const std::map<std::byte, Decompiler::InstructionCode> no_operands_instruction_map = {
     {std::byte(0x00), Decompiler::InstructionCode::NOOP},
     {std::byte(0x04), Decompiler::InstructionCode::INC_B},
     {std::byte(0x14), Decompiler::InstructionCode::INC_D},
@@ -25,13 +25,25 @@ const std::map<std::byte, Decompiler::InstructionCode> single_byte_instruction_m
     {std::byte(0x1B), Decompiler::InstructionCode::DEC_DE},
     {std::byte(0x2B), Decompiler::InstructionCode::DEC_HL},
     {std::byte(0x3B), Decompiler::InstructionCode::DEC_SP},
+    {std::byte(0xFF), Decompiler::InstructionCode::RST_38H}
 };
 
-const std::map<std::byte, Decompiler::InstructionCode> triple_byte_instruction_map = {
+const std::map<std::byte, Decompiler::InstructionCode> unary_instruction_map = {
+    {std::byte(0x06), Decompiler::InstructionCode::LD8_B},
+    {std::byte(0x16), Decompiler::InstructionCode::LD8_D},
+    {std::byte(0x26), Decompiler::InstructionCode::LD8_H},
+    {std::byte(0x26), Decompiler::InstructionCode::LD8_H},
+    {std::byte(0x26), Decompiler::InstructionCode::LD8_H},
+    {std::byte(0x26), Decompiler::InstructionCode::LD8_H},
+    {std::byte(0x26), Decompiler::InstructionCode::LD8_H}
+};
+
+const std::map<std::byte, Decompiler::InstructionCode> binary_instruction_map = {
     {std::byte(0x01), Decompiler::InstructionCode::LD16_BC},
     {std::byte(0x11), Decompiler::InstructionCode::LD16_DE},
     {std::byte(0x21), Decompiler::InstructionCode::LD16_HL},
-    {std::byte(0x31), Decompiler::InstructionCode::LD16_SP}
+    {std::byte(0x31), Decompiler::InstructionCode::LD16_SP},
+    {std::byte(0xC3), Decompiler::InstructionCode::JP_A16}
 };
 
 std::vector<Decompiler::Instruction> Decompiler::decompile(const std::vector<std::byte>& rom_bytes)
@@ -42,17 +54,26 @@ std::vector<Decompiler::Instruction> Decompiler::decompile(const std::vector<std
         for (size_t index = 0 ; index < rom_bytes.size(); index++)
         {
             auto byte = rom_bytes[index];
-            if (single_byte_instruction_map.find(byte) != single_byte_instruction_map.end())
+            if (no_operands_instruction_map.find(byte) != no_operands_instruction_map.end())
             {
                 auto instruction = Instruction{
-                    .code = single_byte_instruction_map.at(byte)
+                    .code = no_operands_instruction_map.at(byte)
                 };
                 instructions.push_back(instruction);
             }
-            else if (triple_byte_instruction_map.find(byte) != triple_byte_instruction_map.end())
+            else if (unary_instruction_map.find(byte) != unary_instruction_map.end())
             {
                 auto instruction = Instruction{
-                    .code = triple_byte_instruction_map.at(byte)
+                    .code = unary_instruction_map.at(byte)
+                };
+                instruction.operands = {rom_bytes[index + 1]};
+                instructions.push_back(instruction);
+                index += 1;
+            }
+            else if (binary_instruction_map.find(byte) != binary_instruction_map.end())
+            {
+                auto instruction = Instruction{
+                    .code = binary_instruction_map.at(byte)
                 };
                 instruction.operands = {rom_bytes[index + 1], rom_bytes[index + 2]};
                 instructions.push_back(instruction);

@@ -30,6 +30,11 @@ enum class InstructionCode {
     LD16_DE,
     LD16_HL,
     LD16_SP,
+    LD8_B,
+    LD8_D,
+    LD8_H,
+    JP_A16,
+    RST_38H
 };
 
 struct Instruction {

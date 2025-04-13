@@ -6,5 +6,8 @@ Basic CPU instructions are handled
 > Handle NOOP
 > Handle single byte INC instructions
 > Handle single byte DEC instructions
-Handle two byte INC instructions
-Handle two byte DEC instructions
+> Handle two byte INC instructions
+> Handle two byte DEC instructions
+> Handle LD 16bits
+> Handle LD 8bits
+> Tetris first row
