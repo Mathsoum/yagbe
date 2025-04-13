@@ -39,9 +39,9 @@ enum class InstructionCode {
 
 struct Instruction {
     InstructionCode code;
-    std::vector<std::byte> operands;
+    std::vector<std::uint8_t> operands;
 };
 
-std::vector<Instruction> decompile(const std::vector<std::byte>& rom_bytes);
+std::vector<Instruction> decompile(const std::vector<std::uint8_t>& rom_bytes);
 
 }

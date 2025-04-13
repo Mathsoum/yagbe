@@ -17,4 +17,24 @@ TEST(EmulatorTest, load_binary_in_emulator) {
     EXPECT_EQ(emulator.romSize(), 32768);
 }
 
+TEST(EmulatorTest, current_instruction) {
+    auto emulator = Emulator{};
+    emulator.loadROMFromFile("Tetris.gb");
+    EXPECT_EQ(emulator.pc(), 0);
+    EXPECT_EQ(emulator.romSize(), 32768);
+
+    emulator.nextInstruction();
+    EXPECT_EQ(emulator.pc(), 1);
+}
+
+TEST(EmulatorTest, advance_pc) {
+    auto emulator = Emulator{};
+    emulator.loadROMFromFile("Tetris.gb");
+    EXPECT_EQ(emulator.pc(), 0);
+    EXPECT_EQ(emulator.romSize(), 32768);
+
+    emulator.nextInstruction();
+    EXPECT_EQ(emulator.pc(), 1);
+}
+
 }

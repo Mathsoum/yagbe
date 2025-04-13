@@ -22,3 +22,7 @@ void Emulator::loadROMFromFile(const std::string& filename) {
 size_t Emulator::romSize() const {
     return _rom.size();
 }
+
+void Emulator::nextInstruction() {
+    ++_pc;
+}

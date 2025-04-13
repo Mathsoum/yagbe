@@ -7,6 +7,7 @@ class Emulator {
         std::uint16_t pc() const;
         void loadROMFromFile(const std::string& filename);
         size_t romSize() const;
+        void nextInstruction();
 
     private:
         std::uint16_t _pc = 0;

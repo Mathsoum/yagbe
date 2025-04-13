@@ -12,13 +12,13 @@ TEST(DecompilerTest, empty_binary) {
 }
 
 TEST(DecompilerTest, noop) {
-    auto instructions = Decompiler::decompile({std::byte{0x00}});
+    auto instructions = Decompiler::decompile({0x00});
     EXPECT_EQ(instructions.size(), 1);
     EXPECT_EQ(instructions.at(0).code, Decompiler::InstructionCode::NOOP);
 }
 
 TEST(DecompilerTest, increment_single_bytes) {
-    auto instructions = Decompiler::decompile({std::byte{0x04}, std::byte{0x14}, std::byte{0x24}, std::byte{0x0C}, std::byte{0x1C}, std::byte{0x2C}, std::byte{0x3C}});
+    auto instructions = Decompiler::decompile({0x04, 0x14, 0x24, 0x0C, 0x1C, 0x2C, 0x3C});
     EXPECT_EQ(instructions.size(), 7);
     EXPECT_EQ(instructions.at(0).code, Decompiler::InstructionCode::INC_B);
     EXPECT_EQ(instructions.at(1).code, Decompiler::InstructionCode::INC_D);
@@ -30,7 +30,7 @@ TEST(DecompilerTest, increment_single_bytes) {
 }
 
 TEST(DecompilerTest, decrement_single_bytes) {
-    auto instructions = Decompiler::decompile({std::byte{0x05}, std::byte{0x15}, std::byte{0x25}, std::byte{0x0D}, std::byte{0x1D}, std::byte{0x2D}, std::byte{0x3D}});
+    auto instructions = Decompiler::decompile({0x05, 0x15, 0x25, 0x0D, 0x1D, 0x2D, 0x3D});
     EXPECT_EQ(instructions.size(), 7);
     EXPECT_EQ(instructions.at(0).code, Decompiler::InstructionCode::DEC_B);
     EXPECT_EQ(instructions.at(1).code, Decompiler::InstructionCode::DEC_D);
@@ -43,14 +43,14 @@ TEST(DecompilerTest, decrement_single_bytes) {
 
 TEST(DecompilerTest, increment_decrement_single_and_multi_bytes) {
     auto instructions = Decompiler::decompile({
-        std::byte{0x03},
-        std::byte{0x13},
-        std::byte{0x23},
-        std::byte{0x33},
-        std::byte{0x0B},
-        std::byte{0x1B},
-        std::byte{0x2B},
-        std::byte{0x3B}
+        0x03,
+        0x13,
+        0x23,
+        0x33,
+        0x0B,
+        0x1B,
+        0x2B,
+        0x3B
     });
 
     EXPECT_EQ(instructions.size(), 8);
@@ -68,18 +68,18 @@ TEST(DecompilerTest, read_from_file) {
     std::ifstream ifs("Tetris.gb", std::ios::binary);
     EXPECT_TRUE(ifs.is_open());
     while(ifs.good()) {
-        std::byte byte;
-        ifs.read(reinterpret_cast<char*>(&byte), sizeof(std::byte));
+        std::uint8_t byte;
+        ifs.read(reinterpret_cast<char*>(&byte), sizeof(std::uint8_t));
         //TODO More tests
     }
 }
 
 TEST(DecompilerTest, LD_16bytes_instructions) {
     auto instructions = Decompiler::decompile({
-        std::byte{0x01}, std::byte{0x01}, std::byte{0x23},
-        std::byte{0x11}, std::byte{0x12}, std::byte{0x34},
-        std::byte{0x21}, std::byte{0x23}, std::byte{0x45},
-        std::byte{0x31}, std::byte{0x34}, std::byte{0x56},
+        0x01, 0x01, 0x23,
+        0x11, 0x12, 0x34,
+        0x21, 0x23, 0x45,
+        0x31, 0x34, 0x56,
     });
 
     EXPECT_EQ(instructions.size(), 4);
@@ -95,9 +95,9 @@ TEST(DecompilerTest, LD_16bytes_instructions) {
 
 TEST(DecompilerTest, LD_8bytes_instructions) {
     auto instructions = Decompiler::decompile({
-        std::byte{0x06}, std::byte{0x01},
-        std::byte{0x16}, std::byte{0x12},
-        std::byte{0x26}, std::byte{0x23},
+        0x06, 0x01,
+        0x16, 0x12,
+        0x26, 0x23,
     });
 
     EXPECT_EQ(instructions.size(), 3);
@@ -112,14 +112,14 @@ TEST(DecompilerTest, LD_8bytes_instructions) {
 TEST(DecompilerTest, Tetris_first_row) {
     //0cc3 0002 0000 0000 0cc3 ff02 ffff ffff
     auto instructions = Decompiler::decompile({
-        std::byte{0x0c}, std::byte{0xc3},
-        std::byte{0x00}, std::byte{0x02},
-        std::byte{0x00}, std::byte{0x00},
-        std::byte{0x00}, std::byte{0x00},
-        std::byte{0x0C}, std::byte{0xc3},
-        std::byte{0xff}, std::byte{0x02},
-        std::byte{0xff}, std::byte{0xff},
-        std::byte{0xff}, std::byte{0xff},
+        0x0c, 0xc3,
+        0x00, 0x02,
+        0x00, 0x00,
+        0x00, 0x00,
+        0x0C, 0xc3,
+        0xff, 0x02,
+        0xff, 0xff,
+        0xff, 0xff,
     });
 
     EXPECT_EQ(instructions.size(), 12);
