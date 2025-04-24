@@ -1,2 +1,9 @@
 La surprise a été de réaliser que les ROM sont en big endian.
 Les tests ont permis d'identifier ça :wink:
+
+
+Ne sachant pas comment continuer (ou commencer), j'ai décidé de faire quelques recherches sur les fondamentaux du développement d'émulateurs.
+Tour d'horizon de l'implémentation d'un émulateur CHIP-8 (pong) : https://www.codemotion.com/magazine/frontend/gamedev/how-to-build-an-emulator/
+
+La première étape sur le site est de gérer la mémoire et les registres.
+Let's do that.

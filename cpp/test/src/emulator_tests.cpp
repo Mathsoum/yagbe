@@ -40,5 +40,57 @@ TEST(EmulatorTest, advance_pc_and_current_instruction) {
     EXPECT_EQ(emulator.currentInstruction(), 0x0c);
 }
 
+TEST(EmulatorTest, memory_init) {
+    auto emulator = Emulator{};
+    EXPECT_EQ(emulator.memory().capacity(), 0xFFFF);
+}
+
+TEST(EmulatorTest, memory_load_rom) {
+    auto emulator = Emulator{};
+    emulator.loadROMFromFile("Tetris.gb");
+    EXPECT_EQ(emulator.memory().at(0x0000), 0xc3);
+    EXPECT_EQ(emulator.memory().at(0x1FFF), 0x05);
+    EXPECT_EQ(emulator.memory().at(0x2FFF), 0xfd);
+    EXPECT_EQ(emulator.memory().at(0x3FFF), 0x2f);
+    EXPECT_EQ(emulator.memory().at(0x4FFF), 0x15);
+    EXPECT_EQ(emulator.memory().at(0x5FFF), 0x4c);
+    EXPECT_EQ(emulator.memory().at(0x6FFF), 0x70);
+    EXPECT_EQ(emulator.memory().at(0x7FFF), 0x00);
+}
+
+TEST(EmulatorTest, registers_init) {
+    auto emulator = Emulator{};
+    EXPECT_EQ(emulator.reg_a(), 0x00);
+    EXPECT_EQ(emulator.reg_b(), 0x00);
+    EXPECT_EQ(emulator.reg_c(), 0x00);
+    EXPECT_EQ(emulator.reg_d(), 0x00);
+    EXPECT_EQ(emulator.reg_e(), 0x00);
+    EXPECT_EQ(emulator.reg_h(), 0x00);
+    EXPECT_EQ(emulator.reg_l(), 0x00);
+    EXPECT_EQ(emulator.reg_flags(), 0x00);
+
+    emulator.set_reg_a(0x12);
+    emulator.set_reg_b(0x34);
+    emulator.set_reg_c(0x56);
+    emulator.set_reg_d(0x78);
+    emulator.set_reg_e(0x9A);
+    emulator.set_reg_h(0xBC);
+    emulator.set_reg_l(0xDE);
+    emulator.set_reg_flags(0xF0);
+
+    EXPECT_EQ(emulator.reg_a(), 0x12);
+    EXPECT_EQ(emulator.reg_b(), 0x34);
+    EXPECT_EQ(emulator.reg_c(), 0x56);
+    EXPECT_EQ(emulator.reg_d(), 0x78);
+    EXPECT_EQ(emulator.reg_e(), 0x9A);
+    EXPECT_EQ(emulator.reg_h(), 0xBC);
+    EXPECT_EQ(emulator.reg_l(), 0xDE);
+    EXPECT_EQ(emulator.reg_flags(), 0xF0);
+
+    EXPECT_EQ(emulator.reg_af(), 0x12F0);
+    EXPECT_EQ(emulator.reg_bc(), 0x3456);
+    EXPECT_EQ(emulator.reg_de(), 0x789A);
+    EXPECT_EQ(emulator.reg_hl(), 0xBCDE);
+}
 
 }

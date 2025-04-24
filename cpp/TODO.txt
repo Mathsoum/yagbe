@@ -15,3 +15,9 @@ Basic CPU instructions are handled
 Execution loop
 Implement PC
 Implement SP
+
+
+Implement memory
+> Reserve memory space
+> Load RAM to correct address
+Implement registers
