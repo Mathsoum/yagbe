@@ -7,6 +7,7 @@ namespace {
 TEST(EmulatorTest, test_PC) {
     auto emulator = Emulator{};
     EXPECT_EQ(emulator.pc(), 0);
+    EXPECT_EQ(emulator.sp(), 0);
     EXPECT_EQ(emulator.romSize(), 0);
 }
 
@@ -91,6 +92,29 @@ TEST(EmulatorTest, registers_init) {
     EXPECT_EQ(emulator.reg_bc(), 0x3456);
     EXPECT_EQ(emulator.reg_de(), 0x789A);
     EXPECT_EQ(emulator.reg_hl(), 0xBCDE);
+}
+
+TEST(EmulatorTest, execute_ld) {
+    auto emulator = Emulator{};
+    emulator.loadROM({
+        0x01, 0x12, 0x34,   /* LD BC,d16 */
+        0x11, 0x56, 0x78,   /* LD DE,d16 */
+        0x21, 0x9A, 0xBC,   /* LD HL,d16 */
+        0x31, 0xDE, 0xF0,   /* LD SP,d16 */
+    });
+    EXPECT_EQ(emulator.pc(), 0x0000);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0003);
+    EXPECT_EQ(emulator.reg_bc(), 0x1234);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0006);
+    EXPECT_EQ(emulator.reg_de(), 0x5678);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0009);
+    EXPECT_EQ(emulator.reg_hl(), 0x9ABC);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x000C);
+    EXPECT_EQ(emulator.sp(), 0xDEF0);
 }
 
 }

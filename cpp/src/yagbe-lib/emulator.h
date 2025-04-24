@@ -3,16 +3,29 @@
 #include <vector>
 
 class Emulator {
-    public:
-        Emulator() : _memory(0xFFFF) {}
 
-        std::uint16_t pc() const;
-        const std::vector<std::uint8_t>& rom() const;
+    static constexpr std::uint8_t LD16_BC = 0x01;
+    static constexpr std::uint8_t LD16_DE = 0x11;
+    static constexpr std::uint8_t LD16_HL = 0x21;
+    static constexpr std::uint8_t LD16_SP = 0x31;
+
+    public:
+        Emulator() { _memory.reserve(0xFFFF); }
+
         void loadROMFromFile(const std::string& filename);
+        void loadROM(const std::vector<std::uint8_t>& rom);
+
+        const std::vector<std::uint8_t>& rom() const;
         size_t romSize() const;
+
+        void execute();
+
         void nextInstruction();
         std::uint8_t currentInstruction() const;
         const std::vector<std::uint8_t>& memory() const;
+
+        std::uint16_t pc() const;
+        std::uint16_t sp() const;
 
         std::uint8_t reg_a() const;
         std::uint8_t reg_b() const;
@@ -39,6 +52,8 @@ class Emulator {
 
     private:
         std::uint16_t _pc = 0;
+        std::uint16_t _sp = 0;
+
         std::vector<std::uint8_t> _rom;
         std::vector<std::uint8_t> _memory;
 

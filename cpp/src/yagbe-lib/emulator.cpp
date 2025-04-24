@@ -4,16 +4,11 @@
 #include <ios>
 #include <iostream>
 
-std::uint16_t Emulator::pc() const {
-    return _pc;
-}
-
-const std::vector<std::uint8_t>& Emulator::rom() const {
-    return _rom;
-}
-
-const std::vector<std::uint8_t>& Emulator::memory() const {
-    return _memory;
+void Emulator::loadROM(const std::vector<std::uint8_t>& rom) {
+    _rom = rom;
+    for (auto byte : rom) {
+        _memory.push_back(byte);
+    }
 }
 
 void Emulator::loadROMFromFile(const std::string& filename) {
@@ -29,11 +24,49 @@ void Emulator::loadROMFromFile(const std::string& filename) {
     _rom.resize(fileSize);
     file.read(reinterpret_cast<char*>(_rom.data()), fileSize);
     file.seekg(0, std::ios::beg);
+    _memory.resize(fileSize);
     file.read(reinterpret_cast<char*>(_memory.data()), fileSize);
+}
+
+const std::vector<std::uint8_t>& Emulator::rom() const {
+    return _rom;
+}
+
+std::uint16_t Emulator::pc() const {
+    return _pc;
+}
+
+std::uint16_t Emulator::sp() const {
+    return _sp;
+}
+
+const std::vector<std::uint8_t>& Emulator::memory() const {
+    return _memory;
 }
 
 size_t Emulator::romSize() const {
     return _rom.size();
+}
+
+void Emulator::execute() {
+    auto opcode = _memory.at(_pc);
+    if (opcode == LD16_BC) {
+        auto d16 = (_memory.at(_pc + 1) << 8) | _memory.at(_pc + 2);
+        _reg_bc = d16;
+        _pc += 3;
+    } else if (opcode == LD16_DE) {
+        auto d16 = (_memory.at(_pc + 1) << 8) | _memory.at(_pc + 2);
+        _reg_de = d16;
+        _pc += 3;
+    } else if (opcode == LD16_HL) {
+        auto d16 = (_memory.at(_pc + 1) << 8) | _memory.at(_pc + 2);
+        _reg_hl = d16;
+        _pc += 3;
+    } else if (opcode == LD16_SP) {
+        auto d16 = (_memory.at(_pc + 1) << 8) | _memory.at(_pc + 2);
+        _sp = d16;
+        _pc += 3;
+    }
 }
 
 void Emulator::nextInstruction() {
