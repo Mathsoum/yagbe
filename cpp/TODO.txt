@@ -11,3 +11,7 @@ Basic CPU instructions are handled
 > Handle LD 16bits
 > Handle LD 8bits
 > Tetris first row
+
+Execution loop
+Implement PC
+Implement SP

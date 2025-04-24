@@ -1,5 +1,6 @@
 
 #include "gtest/gtest.h"
+#include <cstdint>
 #include <fstream>
 #include "decompiler.h"
 #include "emulator.h"
@@ -127,6 +128,24 @@ TEST(DecompilerTest, Tetris_first_row) {
     EXPECT_TRUE(instructions.at(0).operands.empty());
     EXPECT_EQ(instructions.at(1).code, Decompiler::InstructionCode::JP_A16);
     EXPECT_EQ(instructions.at(1).operands.size(), 2);
+}
+
+
+TEST(DecompilerTest, print_out_rom_data) {
+    std::ifstream file("Tetris.gb", std::ios::binary);
+    if (!file) {
+        throw std::runtime_error("Failed to open ROM file");
+    }
+
+    file.seekg(0, std::ios::end);
+    std::streampos fileSize = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    std::vector<std::uint8_t> rom;
+    rom.resize(fileSize);
+
+    auto instructions = Decompiler::decompile(rom);
+    EXPECT_EQ(instructions.at(0).code, Decompiler::InstructionCode::LD8_B);
 }
 
 }
