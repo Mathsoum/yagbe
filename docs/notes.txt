@@ -1,0 +1,2 @@
+La surprise a été de réaliser que les ROM sont en big endian.
+Les tests ont permis d'identifier ça :wink:
