@@ -9,8 +9,16 @@ class Emulator {
     static constexpr std::uint8_t LD16_HL = 0x21;
     static constexpr std::uint8_t LD16_SP = 0x31;
 
+    static constexpr std::uint8_t LD8_A = 0x3E;
+
+    static constexpr std::uint8_t LDaBC_A = 0x02;
+    static constexpr std::uint8_t LDaDE_A = 0x12;
+
+    static constexpr std::uint8_t LDHLp = 0x22;
+    static constexpr std::uint8_t LDHLm = 0x32;
+
     public:
-        Emulator() { _memory.reserve(0xFFFF); }
+        Emulator() : _memory(0xFFFF) {}
 
         void loadROMFromFile(const std::string& filename);
         void loadROM(const std::vector<std::uint8_t>& rom);

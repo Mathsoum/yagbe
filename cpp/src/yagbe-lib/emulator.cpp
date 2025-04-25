@@ -6,9 +6,7 @@
 
 void Emulator::loadROM(const std::vector<std::uint8_t>& rom) {
     _rom = rom;
-    for (auto byte : rom) {
-        _memory.push_back(byte);
-    }
+    std::copy(rom.begin(), rom.end(), _memory.begin());
 }
 
 void Emulator::loadROMFromFile(const std::string& filename) {
@@ -66,6 +64,24 @@ void Emulator::execute() {
         auto d16 = (_memory.at(_pc + 1) << 8) | _memory.at(_pc + 2);
         _sp = d16;
         _pc += 3;
+    } else if (opcode == LD8_A) {
+        auto d8 = _memory.at(_pc + 1);
+        set_reg_a(d8);
+        _pc += 2;
+    } else if (opcode == LDaBC_A) {
+        _memory.at(_reg_bc) = reg_a();
+        ++_pc;
+    } else if (opcode == LDaDE_A) {
+        _memory.at(_reg_de) = reg_a();
+        ++_pc;
+    } else if (opcode == LDHLp) {
+        _memory.at(_reg_hl) = reg_a();
+        _reg_hl++;
+        ++_pc;
+    } else if (opcode == LDHLm) {
+        _memory.at(_reg_hl) = reg_a();
+        _reg_hl--;
+        ++_pc;
     }
 }
 

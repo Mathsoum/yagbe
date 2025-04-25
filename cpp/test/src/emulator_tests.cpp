@@ -101,6 +101,9 @@ TEST(EmulatorTest, execute_ld) {
         0x11, 0x56, 0x78,   /* LD DE,d16 */
         0x21, 0x9A, 0xBC,   /* LD HL,d16 */
         0x31, 0xDE, 0xF0,   /* LD SP,d16 */
+
+        0x3E, 0x01,         /* LD A,d8 */
+        0x3E, 0x23,         /* LD A,d8 */
     });
     EXPECT_EQ(emulator.pc(), 0x0000);
     emulator.execute();
@@ -115,6 +118,74 @@ TEST(EmulatorTest, execute_ld) {
     emulator.execute();
     EXPECT_EQ(emulator.pc(), 0x000C);
     EXPECT_EQ(emulator.sp(), 0xDEF0);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x000E);
+    EXPECT_EQ(emulator.reg_a(), 0x01);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0010);
+    EXPECT_EQ(emulator.reg_a(), 0x23);
+}
+
+TEST(EmulatorTest, execute_indirect_ld) {
+    auto emulator = Emulator{};
+    emulator.loadROM({
+        0x01, 0x12, 0x34,   /* LD BC,d16 */
+        0x3E, 0xBB,         /* LD A,d8   */
+        0x02,               /* LD (BC),A */
+        0x11, 0x56, 0x78,   /* LD DE,d16 */
+        0x3E, 0xCC,         /* LD A,d8   */
+        0x12,               /* LD (DE),A */
+        0x21, 0x9A, 0xBC,   /* LD HL,d16 */
+        0x3E, 0xDD,         /* LD A,d8   */
+        0x22,               /* LD (HL+),A */
+        0x3E, 0xEE,         /* LD A,d8   */
+        0x32,               /* LD (HL-),A */
+    });
+    EXPECT_EQ(emulator.pc(), 0x0000);
+    EXPECT_EQ(emulator.reg_a(), 0x00);
+
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0003);
+    EXPECT_EQ(emulator.reg_bc(), 0x1234);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0005);
+    EXPECT_EQ(emulator.reg_a(), 0xBB);
+    EXPECT_EQ(emulator.memory().at(0x1234), 0x00);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0006);
+    EXPECT_EQ(emulator.memory().at(0x1234), 0xBB);
+
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0009);
+    EXPECT_EQ(emulator.reg_de(), 0x5678);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x000B);
+    EXPECT_EQ(emulator.reg_a(), 0xCC);
+    EXPECT_EQ(emulator.memory().at(0x5678), 0x00);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x000C);
+    EXPECT_EQ(emulator.memory().at(0x5678), 0xCC);
+
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x000F);
+    EXPECT_EQ(emulator.reg_hl(), 0x9ABC);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0011);
+    EXPECT_EQ(emulator.reg_a(), 0xDD);
+    EXPECT_EQ(emulator.memory().at(0x9ABC), 0x00);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0012);
+    EXPECT_EQ(emulator.memory().at(0x9ABC), 0xDD);
+    EXPECT_EQ(emulator.reg_hl(), 0x9ABD);
+
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0014);
+    EXPECT_EQ(emulator.reg_a(), 0xEE);
+    EXPECT_EQ(emulator.memory().at(0x9ABD), 0x00);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0015);
+    EXPECT_EQ(emulator.memory().at(0x9ABD), 0xEE);
+    EXPECT_EQ(emulator.reg_hl(), 0x9ABC);
 }
 
 }
