@@ -3,3 +3,6 @@ build/
 
 # VSCode settings
 .vscode/
+
+# Cache directory
+.cache/
