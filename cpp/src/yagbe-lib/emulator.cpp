@@ -3,9 +3,9 @@
 #include <fstream>
 #include <ios>
 #include <iostream>
+#include <sstream>
 
-void Emulator::loadROM(const std::vector<std::uint8_t>& rom) {
-    _rom = rom;
+void Emulator::runThis(const std::vector<std::uint8_t>& rom) {
     std::copy(rom.begin(), rom.end(), _memory.begin());
 }
 
@@ -19,15 +19,11 @@ void Emulator::loadROMFromFile(const std::string& filename) {
     std::streampos fileSize = file.tellg();
     file.seekg(0, std::ios::beg);
 
-    _rom.resize(fileSize);
-    file.read(reinterpret_cast<char*>(_rom.data()), fileSize);
-    file.seekg(0, std::ios::beg);
+    file.seekg(0x0100, std::ios::beg);
     _memory.resize(fileSize);
-    file.read(reinterpret_cast<char*>(_memory.data()), fileSize);
-}
+    file.read(reinterpret_cast<char*>(_memory.data()+0x0100), fileSize);
 
-const std::vector<std::uint8_t>& Emulator::rom() const {
-    return _rom;
+    std::copy(_boot_rom.begin(), _boot_rom.end(), _memory.begin());
 }
 
 std::uint16_t Emulator::pc() const {
@@ -43,7 +39,7 @@ const std::vector<std::uint8_t>& Emulator::memory() const {
 }
 
 size_t Emulator::romSize() const {
-    return _rom.size();
+    return _memory.size();
 }
 
 void Emulator::execute() {
@@ -82,16 +78,15 @@ void Emulator::execute() {
         _memory.at(_reg_hl) = reg_a();
         _reg_hl--;
         ++_pc;
+    } else if (opcode == XOR_A) {
+        set_reg_a(0); // A ^ A will always result in A = 0;
+        ++_pc;
     }
-}
-
-void Emulator::nextInstruction() {
-    ++_pc;
-}
-
-std::uint8_t Emulator::currentInstruction() const {
-    std::cout << std::hex << (int)_rom[0] << (int)_rom[1] << std::endl;
-    return _rom[_pc];
+    else {
+        std::stringstream ss;
+        ss << "Unknown opcode 0x" << std::hex << std::setw(2) << std::setfill('0') << (int)opcode << " at PC 0x" << _pc;
+        throw std::runtime_error(ss.str());
+    }
 }
 
 void Emulator::set_reg_a(std::uint8_t value) {
