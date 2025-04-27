@@ -126,20 +126,21 @@ TEST(EmulatorTest, execute_ld) {
 TEST(EmulatorTest, execute_indirect_ld) {
     auto emulator = Emulator{};
     emulator.runThis({
-        0x01, 0x12, 0x34,   /* LD BC,d16 */
-        0x3E, 0xBB,         /* LD A,d8   */
-        0x02,               /* LD (BC),A */
-        0x11, 0x56, 0x78,   /* LD DE,d16 */
-        0x3E, 0xCC,         /* LD A,d8   */
-        0x12,               /* LD (DE),A */
-        0x21, 0x9A, 0xBC,   /* LD HL,d16 */
-        0x3E, 0xDD,         /* LD A,d8   */
+        0x01, 0x12, 0x34,   /* LD BC,d16  */
+        0x3E, 0xBB,         /* LD A,d8    */
+        0x02,               /* LD (BC),A  */
+        0x11, 0x56, 0x78,   /* LD DE,d16  */
+        0x3E, 0xCC,         /* LD A,d8    */
+        0x12,               /* LD (DE),A  */
+        0x21, 0x9A, 0xBC,   /* LD HL,d16  */
+        0x3E, 0xDD,         /* LD A,d8    */
         0x22,               /* LD (HL+),A */
-        0x3E, 0xEE,         /* LD A,d8   */
+        0x3E, 0xEE,         /* LD A,d8    */
         0x32,               /* LD (HL-),A */
-        0xE2,               /* LD (C),A */
-        0x77,               /* LD (HL),A */
-        0xE0, 0x90          /* LD (a8),A */
+        0xE2,               /* LD (C),A   */
+        0x77,               /* LD (HL),A  */
+        0xE0, 0x90,         /* LD (a8),A  */
+        0x1A,               /* LD A,(DE)  */
     });
     EXPECT_EQ(emulator.pc(), 0x0000);
     EXPECT_EQ(emulator.reg_a(), 0x00);
@@ -204,6 +205,12 @@ TEST(EmulatorTest, execute_indirect_ld) {
     emulator.execute();
     EXPECT_EQ(emulator.pc(), 0x0019);
     EXPECT_EQ(emulator.memory().at(0xFF90), 0xEE);
+
+    EXPECT_EQ(emulator.reg_a(), 0xEE);
+    EXPECT_EQ(emulator.memory().at(0x7856), 0xCC);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x001A);
+    EXPECT_EQ(emulator.reg_a(), 0xCC);
 }
 
 TEST(EmulateurTests, increments)

@@ -98,6 +98,9 @@ void Emulator::execute() {
         _memory.at(_reg_bc) = reg_a();
     } else if (opcode == LDaDE_A) {
         _memory.at(_reg_de) = reg_a();
+    } else if (opcode == LDA_DEi) {
+        set_reg_a(_memory.at(_reg_de));
+        _reg_hl++;
     } else if (opcode == LDHLp) {
         _memory.at(_reg_hl) = reg_a();
         _reg_hl++;
