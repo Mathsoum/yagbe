@@ -60,6 +60,13 @@ void Emulator::execute() {
         auto d8 = _memory.at(_pc + 1);
         set_reg_a(d8);
         _pc += 2;
+    } else if (opcode == LD8_C) {
+        auto d8 = _memory.at(_pc + 1);
+        set_reg_c(d8);
+        _pc += 2;
+    } else if (opcode == LDCi_A) {
+        _memory.at((0xFF00 | reg_c())) = reg_a();
+        ++_pc;
     } else if (opcode == LDaBC_A) {
         _memory.at(_reg_bc) = reg_a();
         ++_pc;

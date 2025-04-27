@@ -96,6 +96,7 @@ TEST(EmulatorTest, execute_ld) {
 
         0x3E, 0x01,         /* LD A,d8 */
         0x3E, 0x23,         /* LD A,d8 */
+        0x0E, 0xAA,         /* LD C,d8 */
     });
     EXPECT_EQ(emulator.pc(), 0x0000);
     emulator.execute();
@@ -116,6 +117,10 @@ TEST(EmulatorTest, execute_ld) {
     emulator.execute();
     EXPECT_EQ(emulator.pc(), 0x0010);
     EXPECT_EQ(emulator.reg_a(), 0x23);
+    EXPECT_EQ(emulator.reg_c(), 0x12);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0012);
+    EXPECT_EQ(emulator.reg_c(), 0xAA);
 }
 
 TEST(EmulatorTest, execute_indirect_ld) {
@@ -132,6 +137,7 @@ TEST(EmulatorTest, execute_indirect_ld) {
         0x22,               /* LD (HL+),A */
         0x3E, 0xEE,         /* LD A,d8   */
         0x32,               /* LD (HL-),A */
+        0xE2,               /* LD (C),A */
     });
     EXPECT_EQ(emulator.pc(), 0x0000);
     EXPECT_EQ(emulator.reg_a(), 0x00);
@@ -178,6 +184,12 @@ TEST(EmulatorTest, execute_indirect_ld) {
     EXPECT_EQ(emulator.pc(), 0x0015);
     EXPECT_EQ(emulator.memory().at(0xBC9B), 0xEE);
     EXPECT_EQ(emulator.reg_hl(), 0xBC9A);
+
+    EXPECT_EQ(emulator.reg_a(), 0xEE);
+    EXPECT_EQ(emulator.memory().at(0xFF12), 0x00);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0016);
+    EXPECT_EQ(emulator.memory().at(0xFF12), 0xEE);
 }
 
 TEST(EmulateurTests, xor_a)

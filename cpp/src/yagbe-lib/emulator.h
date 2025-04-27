@@ -10,6 +10,9 @@ class Emulator {
     static constexpr std::uint8_t LD16_SP = 0x31;
 
     static constexpr std::uint8_t LD8_A = 0x3e;
+    static constexpr std::uint8_t LD8_C = 0x0e;
+
+    static constexpr std::uint8_t LDCi_A = 0xe2;
 
     static constexpr std::uint8_t LDaBC_A = 0x02;
     static constexpr std::uint8_t LDaDE_A = 0x12;
