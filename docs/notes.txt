@@ -17,3 +17,6 @@ Récupération de la boot ROM et des infos de construction de la bank mémoire g
 Mise à jour des tests pour garder le fonctionnement actuel. Changement de stratégie : Implémentation des opcode au fur et à mesure que la BOOT ROM et la ROM Tétris les utilisent.
 
 Cette méthode n'empêche pas de continuer à développer l'émulateur en mode TDD. Écrire les tests me permet de bien comprendre les différents opcode et leur fonctionnement.
+
+
+On fait une pause avant de s'attaquer au premier CALL. Ça va jump dans la ROM et on quitte l'interprétation séquentielle pour partir un peu à l'aventure.
