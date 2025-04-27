@@ -9,9 +9,12 @@ class Emulator {
     static constexpr std::uint8_t LD16_HL = 0x21;
     static constexpr std::uint8_t LD16_SP = 0x31;
 
+    static constexpr std::uint8_t LDHLi_A = 0x77;
+
     static constexpr std::uint8_t LD8_A = 0x3e;
     static constexpr std::uint8_t LD8_C = 0x0e;
 
+    static constexpr std::uint8_t LDa8_A = 0xe0;
     static constexpr std::uint8_t LDCi_A = 0xe2;
 
     static constexpr std::uint8_t LDaBC_A = 0x02;
@@ -23,6 +26,8 @@ class Emulator {
     static constexpr std::uint8_t JPNZ_r8 = 0x20;
 
     static constexpr std::uint8_t XOR_A = 0xaf;
+
+    static constexpr std::uint8_t INC_C = 0x0c;
 
     static constexpr std::uint8_t CB_PREFIX = 0xcb;
 

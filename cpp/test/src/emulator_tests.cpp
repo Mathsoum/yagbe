@@ -138,6 +138,8 @@ TEST(EmulatorTest, execute_indirect_ld) {
         0x3E, 0xEE,         /* LD A,d8   */
         0x32,               /* LD (HL-),A */
         0xE2,               /* LD (C),A */
+        0x77,               /* LD (HL),A */
+        0xE0, 0x90          /* LD (a8),A */
     });
     EXPECT_EQ(emulator.pc(), 0x0000);
     EXPECT_EQ(emulator.reg_a(), 0x00);
@@ -190,6 +192,71 @@ TEST(EmulatorTest, execute_indirect_ld) {
     emulator.execute();
     EXPECT_EQ(emulator.pc(), 0x0016);
     EXPECT_EQ(emulator.memory().at(0xFF12), 0xEE);
+
+    EXPECT_EQ(emulator.reg_a(), 0xEE);
+    EXPECT_EQ(emulator.memory().at(0xBC9A), 0xDD);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0017);
+    EXPECT_EQ(emulator.memory().at(0xBC9A), 0xEE);
+
+    EXPECT_EQ(emulator.reg_a(), 0xEE);
+    EXPECT_EQ(emulator.memory().at(0xFF90), 0x00);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0019);
+    EXPECT_EQ(emulator.memory().at(0xFF90), 0xEE);
+}
+
+TEST(EmulateurTests, increments)
+{
+    auto emulator = Emulator{};
+    emulator.runThis({
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+        0x0C,   /* INC C */
+    });
+    EXPECT_EQ(emulator.pc(), 0x0000);
+    EXPECT_EQ(emulator.reg_c(), 0x00);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0001);
+    EXPECT_EQ(emulator.reg_c(), 0x01);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0002);
+    EXPECT_EQ(emulator.reg_c(), 0x02);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0003);
+    EXPECT_EQ(emulator.reg_c(), 0x03);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x0004);
+    EXPECT_EQ(emulator.reg_c(), 0x04);
+    emulator.execute();
+    emulator.execute();
+    emulator.execute();
+    emulator.execute();
+    emulator.execute();
+    emulator.execute();
+    emulator.execute();
+    emulator.execute();
+    emulator.execute();
+    emulator.execute();
+    emulator.execute();
+    EXPECT_TRUE((emulator.reg_flags() & 0x20) == 0);
+    emulator.execute();
+    EXPECT_EQ(emulator.pc(), 0x00010);
+    EXPECT_EQ(emulator.reg_c(), 0x10);
+    EXPECT_TRUE((emulator.reg_flags() & 0x20) > 0);
 }
 
 TEST(EmulateurTests, xor_a)

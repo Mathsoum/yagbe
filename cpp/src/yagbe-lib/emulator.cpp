@@ -39,50 +39,72 @@ const std::vector<std::uint8_t>& Emulator::memory() const {
 
 void Emulator::execute() {
     auto opcode = _memory.at(_pc);
+    ++_pc;
     std::cout << "Executing opcode 0x" << std::hex << std::setw(2) << std::setfill('0') << (int)opcode << " at PC 0x" << std::hex << std::setw(4) << std::setfill('0') << _pc << std::endl;
     if (opcode == LD16_BC) {
-        auto d16 = _memory.at(_pc + 1) | (_memory.at(_pc + 2) << 8);
+        auto op1 = _memory.at(_pc);
+        ++_pc;
+        auto op2 = _memory.at(_pc);
+        ++_pc;
+        auto d16 = op1 | (op2 << 8);
         _reg_bc = d16;
-        _pc += 3;
     } else if (opcode == LD16_DE) {
-        auto d16 = _memory.at(_pc + 1) | (_memory.at(_pc + 2) << 8);
+        auto op1 = _memory.at(_pc);
+        ++_pc;
+        auto op2 = _memory.at(_pc);
+        ++_pc;
+        auto d16 = op1 | (op2 << 8);
         _reg_de = d16;
-        _pc += 3;
     } else if (opcode == LD16_HL) {
-        auto d16 = _memory.at(_pc + 1) | (_memory.at(_pc + 2) << 8);
+        auto op1 = _memory.at(_pc);
+        ++_pc;
+        auto op2 = _memory.at(_pc);
+        ++_pc;
+        auto d16 = op1 | (op2 << 8);
         _reg_hl = d16;
-        _pc += 3;
     } else if (opcode == LD16_SP) {
-        auto d16 = _memory.at(_pc + 1) | (_memory.at(_pc + 2) << 8);
+        auto op1 = _memory.at(_pc);
+        ++_pc;
+        auto op2 = _memory.at(_pc);
+        ++_pc;
+        auto d16 = op1 | (op2 << 8);
         _sp = d16;
-        _pc += 3;
+    } else if (opcode == LDHLi_A) {
+        _memory.at(_reg_hl) = reg_a();
     } else if (opcode == LD8_A) {
-        auto d8 = _memory.at(_pc + 1);
+        auto d8 = _memory.at(_pc);
+        ++_pc;
         set_reg_a(d8);
-        _pc += 2;
     } else if (opcode == LD8_C) {
-        auto d8 = _memory.at(_pc + 1);
+        auto d8 = _memory.at(_pc);
+        ++_pc;
         set_reg_c(d8);
-        _pc += 2;
+    } else if (opcode == INC_C) {
+        if (reg_c() == 0x0F)
+            set_reg_flags(reg_flags() | 0x20);
+        else
+            set_reg_flags(reg_flags() & ~0x20);
+
+        set_reg_c(reg_c() + 1);
+
+        if (reg_c() == 0)
+            set_reg_flags(reg_flags() | 0x80);
+    } else if (opcode == LDa8_A) {
+        _memory.at((0xFF00 | _memory.at(_pc))) = reg_a();
+        ++_pc;
     } else if (opcode == LDCi_A) {
         _memory.at((0xFF00 | reg_c())) = reg_a();
-        ++_pc;
     } else if (opcode == LDaBC_A) {
         _memory.at(_reg_bc) = reg_a();
-        ++_pc;
     } else if (opcode == LDaDE_A) {
         _memory.at(_reg_de) = reg_a();
-        ++_pc;
     } else if (opcode == LDHLp) {
         _memory.at(_reg_hl) = reg_a();
         _reg_hl++;
-        ++_pc;
     } else if (opcode == LDHLm) {
         _memory.at(_reg_hl) = reg_a();
         _reg_hl--;
-        ++_pc;
     } else if (opcode == JPNZ_r8) {
-        ++_pc;
         std::int8_t offset = _memory.at(_pc);
         ++_pc;
         if ((reg_flags() & 0x80) == 0)
@@ -90,10 +112,9 @@ void Emulator::execute() {
     } else if (opcode == XOR_A) {
         set_reg_a(0); // A ^ A will always result in A = 0;
         set_reg_flags(reg_flags() | 0x80);
-        ++_pc;
     } else if (opcode == CB_PREFIX) {
-        ++_pc;
         opcode = _memory.at(_pc);
+        ++_pc;
         if (opcode == BIT7H) {
             auto bit = (reg_h() >> 7) & 1;
             if (bit)
@@ -101,7 +122,6 @@ void Emulator::execute() {
             else
                 set_reg_flags(reg_flags() | 0x80);
             set_reg_flags(reg_flags() | 0x20);
-            ++_pc;
         }
     } else {
         std::stringstream ss;
