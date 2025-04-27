@@ -9,7 +9,7 @@ class Emulator {
     static constexpr std::uint8_t LD16_HL = 0x21;
     static constexpr std::uint8_t LD16_SP = 0x31;
 
-    static constexpr std::uint8_t LD8_A = 0x3E;
+    static constexpr std::uint8_t LD8_A = 0x3e;
 
     static constexpr std::uint8_t LDaBC_A = 0x02;
     static constexpr std::uint8_t LDaDE_A = 0x12;
@@ -17,8 +17,13 @@ class Emulator {
     static constexpr std::uint8_t LDHLp = 0x22;
     static constexpr std::uint8_t LDHLm = 0x32;
 
+    static constexpr std::uint8_t JPNZ_r8 = 0x20;
 
-    static constexpr std::uint8_t XOR_A = 0xAF;
+    static constexpr std::uint8_t XOR_A = 0xaf;
+
+    static constexpr std::uint8_t CB_PREFIX = 0xcb;
+
+    static constexpr std::uint8_t BIT7H = 0x7c;
 
     static constexpr std::array<std::uint8_t, 0x0100> _boot_rom = {
         0x31, 0xfe, 0xff, 0xaf, 0x21, 0xff, 0x9f, 0x32, 0xcb, 0x7c, 0x20, 0xfb, 0x21, 0x26, 0xff, 0x0e,
@@ -40,12 +45,10 @@ class Emulator {
     };
 
     public:
-        Emulator() : _memory(0xFFFF) {}
+        Emulator() : _memory(0xFFFF, 0x00) {}
 
         void loadROMFromFile(const std::string& filename);
         void runThis(const std::vector<std::uint8_t>& rom);
-
-        size_t romSize() const;
 
         void execute();
 

@@ -20,7 +20,6 @@ void Emulator::loadROMFromFile(const std::string& filename) {
     file.seekg(0, std::ios::beg);
 
     file.seekg(0x0100, std::ios::beg);
-    _memory.resize(fileSize);
     file.read(reinterpret_cast<char*>(_memory.data()+0x0100), fileSize);
 
     std::copy(_boot_rom.begin(), _boot_rom.end(), _memory.begin());
@@ -38,26 +37,23 @@ const std::vector<std::uint8_t>& Emulator::memory() const {
     return _memory;
 }
 
-size_t Emulator::romSize() const {
-    return _memory.size();
-}
-
 void Emulator::execute() {
     auto opcode = _memory.at(_pc);
+    std::cout << "Executing opcode 0x" << std::hex << std::setw(2) << std::setfill('0') << (int)opcode << " at PC 0x" << std::hex << std::setw(4) << std::setfill('0') << _pc << std::endl;
     if (opcode == LD16_BC) {
-        auto d16 = (_memory.at(_pc + 1) << 8) | _memory.at(_pc + 2);
+        auto d16 = _memory.at(_pc + 1) | (_memory.at(_pc + 2) << 8);
         _reg_bc = d16;
         _pc += 3;
     } else if (opcode == LD16_DE) {
-        auto d16 = (_memory.at(_pc + 1) << 8) | _memory.at(_pc + 2);
+        auto d16 = _memory.at(_pc + 1) | (_memory.at(_pc + 2) << 8);
         _reg_de = d16;
         _pc += 3;
     } else if (opcode == LD16_HL) {
-        auto d16 = (_memory.at(_pc + 1) << 8) | _memory.at(_pc + 2);
+        auto d16 = _memory.at(_pc + 1) | (_memory.at(_pc + 2) << 8);
         _reg_hl = d16;
         _pc += 3;
     } else if (opcode == LD16_SP) {
-        auto d16 = (_memory.at(_pc + 1) << 8) | _memory.at(_pc + 2);
+        auto d16 = _memory.at(_pc + 1) | (_memory.at(_pc + 2) << 8);
         _sp = d16;
         _pc += 3;
     } else if (opcode == LD8_A) {
@@ -78,13 +74,31 @@ void Emulator::execute() {
         _memory.at(_reg_hl) = reg_a();
         _reg_hl--;
         ++_pc;
+    } else if (opcode == JPNZ_r8) {
+        ++_pc;
+        std::int8_t offset = _memory.at(_pc);
+        ++_pc;
+        if ((reg_flags() & 0x80) == 0)
+            _pc += offset;
     } else if (opcode == XOR_A) {
         set_reg_a(0); // A ^ A will always result in A = 0;
+        set_reg_flags(reg_flags() | 0x80);
         ++_pc;
-    }
-    else {
+    } else if (opcode == CB_PREFIX) {
+        ++_pc;
+        opcode = _memory.at(_pc);
+        if (opcode == BIT7H) {
+            auto bit = (reg_h() >> 7) & 1;
+            if (bit)
+                set_reg_flags(reg_flags() & 0x7F);
+            else
+                set_reg_flags(reg_flags() | 0x80);
+            set_reg_flags(reg_flags() | 0x20);
+            ++_pc;
+        }
+    } else {
         std::stringstream ss;
-        ss << "Unknown opcode 0x" << std::hex << std::setw(2) << std::setfill('0') << (int)opcode << " at PC 0x" << _pc;
+        ss << "Unknown opcode 0x" << std::hex << std::setw(2) << std::setfill('0') << (int)opcode << " at PC 0x" << std::hex << std::setw(4) << std::setfill('0') << _pc;
         throw std::runtime_error(ss.str());
     }
 }
