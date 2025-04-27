@@ -7,3 +7,13 @@ Tour d'horizon de l'implémentation d'un émulateur CHIP-8 (pong) : https://www.
 
 La première étape sur le site est de gérer la mémoire et les registres.
 Let's do that.
+
+
+Changement de ressources ! Utilisation des opcode de gameboy plutô que Z80.
+Merci à la vidéo du chauve à lunettes.
+
+Récupération de la boot ROM et des infos de construction de la bank mémoire grace aux nouvelles ressources.
+
+Mise à jour des tests pour garder le fonctionnement actuel. Changement de stratégie : Implémentation des opcode au fur et à mesure que la BOOT ROM et la ROM Tétris les utilisent.
+
+Cette méthode n'empêche pas de continuer à développer l'émulateur en mode TDD. Écrire les tests me permet de bien comprendre les différents opcode et leur fonctionnement.
